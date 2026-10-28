@@ -1,4 +1,4 @@
-public class Livro {
+public class Livro{
     private String titulo;
     private String autor;
     private int anoPublicacao;
@@ -51,11 +51,10 @@ public class Livro {
             this.genero = genero;
         }
     }
-    
-    public void ficha(){
+     public void ficha(){
         System.out.println("Titulo: " + this.titulo);
         System.out.println("Autor: " + this.autor);
         System.out.println("AnoPublicacao: " + this.anoPublicacao);
         System.out.println("Genero: " + this.genero);
-
+    }
 }
