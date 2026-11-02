@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+    <head>
+
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <title>
+         J.L. Acervo
+        </title>
+
+          <link rel="stylesheet" href="style.css">
+
+    </head>
+
+    <body>
+        <header>
+
+            <h1> 
+                J.L. Acervo
+            </h1>
+
+            <p>
+                Sua biblioteca digital
+            </p>
+        </header>
+
+        <main>
+            
+            <section>
+                <h2>
+                    Cadastrar novo livro
+                </h2>
+
+            </section>
+
+            <form>
+                
+                <div class="campo">
+                <label for="titulo">Título do livro</label>
+                <input type="text" name="titulo" placeholder="Título do livro" required>
+                </div>
+
+                <div class="campo">
+                <label for="autor">Nome do autor</label>
+                <input type="text" name="autor" placeholder="Nome do autor" required>
+                </div>
+
+                <div class="campo">
+                <label for="ano">Ano de publicação</label>
+                <input type="number" name="ano" placeholder="Ano de publicação" required>
+                </div>
+
+                <div class="campo">
+                <label for="genero">Gênero do livro</label>
+                <input type="text" name="genero" placeholder="Gênero do livro" required>
+                </div>
+
+                <button type="submit" >Cadastrar</button>
+
+            </form>
+
+            <section>
+
+                <h2>
+                    Livros cadastrados
+                </h2>
+
+                <div id="lista-livros">
+
+                </div>
+
+            </section>
+
+        </main>
+
+        <script src="script.js"></script>
+
+    </body>
+
+</html>
