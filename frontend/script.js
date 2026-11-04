@@ -1,40 +1,48 @@
 const listaLivros = document.querySelector("#lista-livros");
 
-const livros = [
-    {
-    titulo: "O senhor dos Anéis",
-    autor: "J.R.R. Tolkien",
-    ano: 1954,
-    genero: "Fantasia"
-    },
-    {
-    titulo: "Dom Casmurro",
-    autor: "Machado de Assis",
-    ano: 1899,
-    genero: "Romance"
+async function carregarLivros() {
+
+    try {
+        const resposta = await fetch("http://localhost:8080/api/livros");
+
+        if (!resposta.ok) {
+            throw new Error("Resposta da API: " + resposta.status);
+        }
+
+        const livros = await resposta.json();
+
+        listaLivros.innerHTML = "";
+
+        if (livros.length === 0) {
+            listaLivros.textContent = "Nenhum livro cadastrado.";
+            return;
+        }
+
+        livros.forEach((livro) => {
+
+            const card = document.createElement("div");
+            card.classList.add("card-livro");
+
+            [
+                ["h3", livro.titulo],
+                ["p", "Autor: " + livro.autor],
+                ["p", "Ano: " + livro.anoPublicacao],
+                ["p", "Gênero: " + livro.genero]
+            ].forEach(([tag, texto]) => {
+                const elemento = document.createElement(tag);
+                elemento.textContent = texto;
+                card.appendChild(elemento);
+            });
+
+            listaLivros.appendChild(card);
+        });
+
+    } catch (erro) {
+        console.error("Erro ao carregar livros:", erro);
+        listaLivros.textContent = "Não foi possível carregar os livros. Verifique se o servidor está em execução.";
     }
-];
-
-function renderizarLivros() {
-
-    listaLivros.innerHTML = "";
-
-    livros.forEach((livro) => {
-
-    const card = document.createElement("div");
-    card.classList.add("card-livro");
-
-    card.innerHTML = `
-        <h3>${livro.titulo}</h3>
-        <p>Autor: ${livro.autor}</p>
-        <p>Ano: ${livro.ano}</p>
-        <p>Gênero: ${livro.genero}</p>
-    `;
-
-    listaLivros.appendChild(card);
-    });
 }
-renderizarLivros();
+carregarLivros();
 
 
 
