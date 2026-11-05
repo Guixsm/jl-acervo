@@ -5,9 +5,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
+// @Entity: esta classe passa a ser a tabela "livro" no MySQL (necessário para a listagem GET).
 @Entity
-public class Livro {
+public class Livro{
 
+    // Chave primária gerada pelo MySQL. Sem getter de propósito, para o id não aparecer no JSON.
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -17,8 +19,61 @@ public class Livro {
     private int anoPublicacao;
     private String genero;
 
-    public String getTitulo() { return titulo; }
-    public String getAutor() { return autor; }
-    public int getAnoPublicacao() { return anoPublicacao; }
-    public String getGenero() { return genero; }
+    public Livro(){
+
+    }
+    public Livro(String titulo, String autor, int anoPublicacao, String genero){
+        setTitulo(titulo);
+        setAutor(autor);
+        setAnoPublicacao(anoPublicacao);
+        setGenero(genero);
+    }
+    public String getTitulo(){
+        return titulo;
+    }
+    public String getAutor(){
+        return autor;
+    }
+    public int getAnoPublicacao(){
+        return anoPublicacao;
+    }
+    public String getGenero(){
+        return genero;
+    }
+    
+    public void setTitulo(String titulo){
+        if (titulo == null || titulo.isBlank()){
+            throw new IllegalArgumentException ("O campo título não pode ficar vazio.");
+        }else{
+            this.titulo = titulo;
+        }
+    }
+    public void setAutor(String autor){
+        if (autor == null || autor.isBlank()){
+            throw new IllegalArgumentException ("O campo autor não pode ficar vazio.");
+        }else{
+            this.autor = autor;
+        }
+    }
+    public void setAnoPublicacao(int anoPublicacao){
+        if (anoPublicacao <= 0){
+            throw new IllegalArgumentException ("Ano inválido");
+        }else{
+            this.anoPublicacao = anoPublicacao;
+        }
+    }
+    public void setGenero(String genero){
+        if (genero == null || genero.isBlank()){
+            throw new IllegalArgumentException ("Gênero inválido.");
+        }else{
+            this.genero = genero;
+        }
+    }
+    
+    public void ficha(){
+        System.out.println("Titulo: " + this.titulo);
+        System.out.println("Autor: " + this.autor);
+        System.out.println("AnoPublicacao: " + this.anoPublicacao);
+        System.out.println("Genero: " + this.genero);
+    }
 }
