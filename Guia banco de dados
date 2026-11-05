@@ -1,0 +1,269 @@
+# Guia do banco de dados — J.L. Acervo (Linux e Windows)
+
+Passo a passo para configurar o MySQL e rodar o back-end na sua máquina, e para enviar a parte do banco ao GitHub.
+
+> Tudo roda **localmente**. O banco de cada integrante existe só no computador dele. O que vai para o GitHub é o código, nunca os dados nem as senhas.
+
+Em cada passo, siga a subseção do seu sistema: **Linux (Fedora)** ou **Windows (PowerShell)**. Os passos que não mudam entre os sistemas aparecem uma vez só.
+
+## O que faz parte da configuração do banco
+
+| Arquivo | Função |
+|---|---|
+| `springboot/pom.xml` | Driver do MySQL (`mysql-connector-j`) |
+| `springboot/src/main/resources/application.properties` | Conexão com o banco, lendo `DB_USER`, `DB_PASSWORD` e `DB_URL` |
+| `docs/banco.sql` | Cria o banco `jlacervo` e a tabela `livro` |
+
+## 0. Pré-requisitos
+
+- **JDK 21 ou superior.** Confira com `java -version` e `javac -version`. No Windows, instale o JDK 21 (por exemplo, o Temurin) se o `javac` não for reconhecido.
+- **Git.**
+- **Internet na primeira execução**, para o Maven baixar as dependências.
+- **VS Code com a extensão Live Server**, para abrir o front-end.
+
+## 1. Instalar e iniciar o MySQL
+
+### Linux (Fedora)
+
+```bash
+sudo dnf install mysql-server
+sudo systemctl enable --now mysqld
+systemctl is-active mysqld
+```
+
+Deve aparecer `active`. Se o `systemctl status` abrir um paginador, aperte `q` para sair.
+
+> Não instale o `mariadb-server` junto: ele entra em conflito com o `mysql-server`.
+
+### Windows
+
+1. Baixe o **MySQL Installer** em https://dev.mysql.com/downloads/installer/ e instale o **MySQL Server** (8.4 ou 8.0). O **MySQL Shell** e o **Workbench** são opcionais.
+2. Na configuração, defina uma **senha para o root** e anote. Deixe a opção de iniciar o servidor com o Windows marcada, e a porta `3306`.
+3. Em um PowerShell, confira se o serviço está rodando:
+
+```powershell
+Get-Service *mysql*
+```
+
+O status deve ser `Running`. Se estiver `Stopped`, abra o PowerShell **como administrador** e rode `Start-Service NOME_DO_SERVICO`, usando o nome mostrado (por exemplo, `MySQL84`).
+
+4. O comando `mysql` precisa estar no PATH. Teste:
+
+```powershell
+mysql --version
+```
+
+Se não for reconhecido, adicione ao PATH a pasta `C:\Program Files\MySQL\MySQL Server 8.4\bin` (ajuste a versão), feche e abra o PowerShell. Como alternativa, use o programa **MySQL 8.4 Command Line Client** do menu Iniciar.
+
+## 2. Criar o banco e a tabela
+
+Na raiz do projeto.
+
+### Linux
+
+```bash
+cd ~/jl-acervo
+mysql -u root -p < docs/banco.sql
+```
+
+### Windows (PowerShell)
+
+O PowerShell não aceita o `<`, então use o `source`:
+
+```powershell
+cd C:\caminho\para\jl-acervo
+mysql -u root -p -e "source docs/banco.sql"
+```
+
+Digite a senha do root. Se der `Access denied`, veja **Problemas comuns**.
+
+## 3. Criar o usuário do Spring
+
+Troque `SUA_SENHA` por uma senha sua. O comando é o mesmo nos dois sistemas.
+
+```
+mysql -u root -p -e "CREATE USER IF NOT EXISTS 'jlacervo'@'localhost' IDENTIFIED BY 'SUA_SENHA'; GRANT ALL PRIVILEGES ON jlacervo.* TO 'jlacervo'@'localhost'; FLUSH PRIVILEGES;"
+```
+
+Confira se a tabela existe:
+
+```
+mysql -u jlacervo -p jlacervo -e "DESCRIBE livro;"
+```
+
+Deve listar `id`, `titulo`, `autor`, `ano_publicacao` e `genero`.
+
+## 4. Subir o back-end
+
+As credenciais vão em variáveis de ambiente, nunca no código. Use a senha real, não o texto `SUA_SENHA`.
+
+### Linux
+
+```bash
+export DB_USER=jlacervo
+export DB_PASSWORD='SUA_SENHA'
+
+cd ~/jl-acervo/springboot
+sh mvnw spring-boot:run
+```
+
+Se o `./mvnw` der `Permissão negada`, use `sh mvnw`, como acima.
+
+### Windows (PowerShell)
+
+```powershell
+$env:DB_USER = "jlacervo"
+$env:DB_PASSWORD = "SUA_SENHA"
+
+cd C:\caminho\para\jl-acervo\springboot
+.\mvnw.cmd spring-boot:run
+```
+
+No Prompt de Comando (`cmd`), use `set DB_USER=jlacervo` e `set DB_PASSWORD=SUA_SENHA`.
+
+Valem para os dois sistemas:
+
+- As variáveis só valem no terminal em que foram definidas. Se abrir outro terminal, defina de novo.
+- Se o MySQL estiver em outra porta ou máquina, defina também `DB_URL`, por exemplo `jdbc:mysql://localhost:3306/jlacervo`.
+- O log deve terminar com `Started JlacervoApplication`.
+
+## 5. Testar
+
+Com o back-end rodando, em outro terminal.
+
+### Linux
+
+```bash
+curl http://localhost:8080/api/livros
+```
+
+### Windows (PowerShell)
+
+```powershell
+curl.exe http://localhost:8080/api/livros
+```
+
+(No PowerShell, `curl` sozinho é um apelido de outro comando; use `curl.exe`.)
+
+Deve responder `[]` com a tabela vazia. Para ver um livro na resposta, insira um registro de teste (mesmo comando nos dois sistemas) e consulte de novo:
+
+```
+mysql -u jlacervo -p jlacervo -e "INSERT INTO livro (titulo, autor, ano_publicacao, genero) VALUES ('Dom Casmurro','Machado de Assis',1899,'Romance');"
+```
+
+A resposta deve trazer os 4 campos: `titulo`, `autor`, `anoPublicacao` e `genero`.
+
+Para o front-end, abra `frontend/index.html` pelo **Live Server** do VS Code (porta 5500). Abrir o arquivo com duplo clique (`file://`) é bloqueado pelo CORS.
+
+## 6. Enviar a parte do banco ao GitHub (Heitor)
+
+Os comandos do Git são iguais no Linux e no Windows (PowerShell ou Git Bash). Na raiz do projeto:
+
+```
+git checkout Heitor
+git status --short
+```
+
+Adicione **somente** os arquivos do banco:
+
+```
+git add springboot/pom.xml springboot/src/main/resources/application.properties docs/banco.sql
+git commit -m "Configura conexao com MySQL e adiciona script do banco"
+git log -1 --format="%an <%ae>"
+git push origin Heitor
+```
+
+Depois, no GitHub, abra um **Pull Request** da branch `Heitor` para a `main`.
+
+Antes de commitar, confirme que nenhuma senha real foi escrita nos arquivos. O `application.properties` deve ter apenas `${DB_USER}` e `${DB_PASSWORD}`.
+
+## 7. O que cada integrante faz depois do merge
+
+Cada um segue os passos 1 a 5 na própria máquina, escolhendo a própria senha:
+
+```
+git pull origin main
+```
+
+Depois: criar o banco (passo 2), criar o usuário (passo 3) e subir o back-end (passo 4).
+
+## Problemas comuns
+
+| Erro | Causa e solução |
+|---|---|
+| `Could not resolve placeholder 'DB_USER'` | As variáveis não foram definidas neste terminal. Refaça o passo 4. |
+| `Conexão recusada` / `Communications link failure` | O MySQL não está rodando. Linux: `sudo systemctl start mysqld` e `ss -ltn \| grep 3306`. Windows: `Get-Service *mysql*` e `netstat -ano \| findstr 3306`. |
+| `Access denied for user 'jlacervo'` | Senha errada em `DB_PASSWORD`, ou o usuário não foi criado (passo 3). |
+| `Access denied for user 'root'` | A senha do root é outra. Redefina-a (abaixo). |
+| `Public Key Retrieval is not allowed` | Acrescente `?allowPublicKeyRetrieval=true` na `DB_URL`. |
+| `mvn test` falha | O `JlacervoApplicationTests` sobe o Spring de verdade e precisa do MySQL e das variáveis. O `spring-boot:run` não roda testes. |
+| `mysql` não é reconhecido (Windows) | Adicione a pasta `bin` do MySQL ao PATH (passo 1) ou use o MySQL Command Line Client. |
+
+### Redefinir a senha do root
+
+Troque `SENHA_DO_ROOT` e `SENHA_DO_APP` por senhas suas, só com letras e números.
+
+#### Linux
+
+```bash
+sudo systemctl stop mysqld
+sudo pkill mysqld
+sleep 3
+
+sudo tee /var/lib/mysql-files/reset.sql > /dev/null <<'EOF'
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'SENHA_DO_ROOT';
+CREATE USER IF NOT EXISTS 'jlacervo'@'localhost' IDENTIFIED BY 'SENHA_DO_APP';
+GRANT ALL PRIVILEGES ON jlacervo.* TO 'jlacervo'@'localhost';
+EOF
+
+sudo /usr/libexec/mysqld --init-file=/var/lib/mysql-files/reset.sql --user=mysql
+```
+
+Espere aparecer `ready for connections` e aperte `Ctrl+C`. Depois:
+
+```bash
+sudo rm /var/lib/mysql-files/reset.sql
+sudo pkill mysqld
+sleep 3
+sudo systemctl start mysqld
+systemctl is-active mysqld
+```
+
+> Se sobrar um `mysqld` rodando com `--skip-grant-tables` ou `--skip-networking`, a porta 3306 fica fechada e o Spring recebe `Conexão recusada`. Confira com `pgrep -a mysqld` e encerre com `sudo pkill mysqld`.
+
+#### Windows
+
+Use um PowerShell **como administrador**.
+
+1. Pare o serviço (use o nome mostrado por `Get-Service *mysql*`):
+
+```powershell
+Stop-Service MySQL84
+```
+
+2. Crie o arquivo `C:\reset.sql` (por exemplo, no Bloco de Notas) com este conteúdo:
+
+```sql
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'SENHA_DO_ROOT';
+CREATE USER IF NOT EXISTS 'jlacervo'@'localhost' IDENTIFIED BY 'SENHA_DO_APP';
+GRANT ALL PRIVILEGES ON jlacervo.* TO 'jlacervo'@'localhost';
+```
+
+3. Inicie o MySQL executando esse arquivo (ajuste a versão no caminho). O comando fica ocupando o terminal:
+
+```powershell
+& "C:\Program Files\MySQL\MySQL Server 8.4\bin\mysqld.exe" --init-file=C:/reset.sql --console
+```
+
+4. Espere aparecer `ready for connections` e aperte `Ctrl+C`. Depois apague o arquivo e suba o serviço:
+
+```powershell
+Remove-Item C:\reset.sql
+Start-Service MySQL84
+```
+
+Em seguida volte ao passo 2.
+
+## Para o cadastro gravar de verdade
+
+A persistência só se completa quando o POST do Rian for integrado. Hoje o `LivroService` dele apenas devolve o objeto, sem gravar. Quando ele usar o `livroRepository.save(livro)`, o livro cadastrado pelo formulário cairá na tabela `livro` e aparecerá na listagem.
