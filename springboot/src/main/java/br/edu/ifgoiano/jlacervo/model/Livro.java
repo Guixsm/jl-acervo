@@ -1,5 +1,19 @@
 package br.edu.ifgoiano.jlacervo.model;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
+// @Entity: esta classe passa a ser a tabela "livro" no MySQL (necessário para a listagem GET).
+@Entity
 public class Livro{
+
+    // Chave primária gerada pelo MySQL. Sem getter de propósito, para o id não aparecer no JSON.
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     private String titulo;
     private String autor;
     private int anoPublicacao;
