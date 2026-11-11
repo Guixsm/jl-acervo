@@ -58,7 +58,7 @@ formulario.addEventListener("submit", async (event) => {
     const livro = {
         titulo: dados.get("titulo"),
         autor: dados.get("autor"),
-        ano: Number(dados.get("ano")),
+        anoPublicacao: Number(dados.get("ano")),
         genero: dados.get("genero")
     };
 
