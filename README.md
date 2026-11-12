@@ -52,6 +52,8 @@ jl-acervo/
 │
 ├── docs/
 │   ├── CONTRATO_API.md
+│   ├── Guia Banco de Dados
+│   ├── RELATÓRIO DE TESTES - SPRINT 2.md
 │   └── banco.sql
 │
 ├── frontend/
