@@ -1,9 +1,12 @@
 const listaLivros = document.querySelector("#lista-livros");
 
-async function carregarLivros() {
+async function carregarLivros(busca = "") {
 
     try {
-        const resposta = await fetch("http://localhost:8080/api/livros");
+        const url = busca
+            ? "http://localhost:8080/api/livros?busca=" + encodeURIComponent(busca)
+            : "http://localhost:8080/api/livros";
+        const resposta = await fetch(url);
 
         if (!resposta.ok) {
             throw new Error("Resposta da API: " + resposta.status);
@@ -14,7 +17,7 @@ async function carregarLivros() {
         listaLivros.innerHTML = "";
 
         if (livros.length === 0) {
-            listaLivros.textContent = "Nenhum livro cadastrado.";
+            listaLivros.textContent = busca ? "Nenhum livro encontrado." : "Nenhum livro cadastrado.";
             return;
         }
 
@@ -44,7 +47,9 @@ async function carregarLivros() {
 }
 carregarLivros();
 
-
+// Campo de busca: a cada letra digitada, recarrega a lista filtrada pelo texto.
+const campoBusca = document.querySelector("#campo-busca");
+campoBusca.addEventListener("input", () => carregarLivros(campoBusca.value.trim()));
 
 
 const formulario = document.querySelector("#formulario-livro");
@@ -58,7 +63,7 @@ formulario.addEventListener("submit", async (event) => {
     const livro = {
         titulo: dados.get("titulo"),
         autor: dados.get("autor"),
-        ano: Number(dados.get("ano")),
+        anoPublicacao: Number(dados.get("ano")),
         genero: dados.get("genero")
     };
 
