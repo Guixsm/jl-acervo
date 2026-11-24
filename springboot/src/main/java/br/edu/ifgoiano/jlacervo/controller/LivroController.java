@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 import br.edu.ifgoiano.jlacervo.model.Livro;
 import br.edu.ifgoiano.jlacervo.repository.LivroRepository;
 import br.edu.ifgoiano.jlacervo.service.LivroService;
+
+import org.springframework.web.bind.annotation.RequestParam;
+
 @CrossOrigin(origins = {
     "http://localhost:5500",
     "http://127.0.0.1:5500"
@@ -30,13 +33,16 @@ public class LivroController {
         this.livroRepository = livroRepository;
     }
 
-    // GET /api/livros (Eduardo): lista os livros do MySQL. Lista vazia retorna [].
+    //lista os livros do MySQL. Lista vazia retorna [].
     @GetMapping
-    public List<Livro> listarLivros() {
-        return livroRepository.findAll();
+    public List<Livro> listarLivros(@RequestParam(name = "busca", required = false) String busca) {
+        if (busca == null || busca.isBlank()) {
+            return livroRepository.findAll();
+        }
+        return livroRepository.findByTituloContainingIgnoreCaseOrAutorContainingIgnoreCase(busca.trim(), busca.trim());
     }
 
-    // POST /api/livros (Rian): mantido sem alterações.
+    //mantido sem alterações.
     @PostMapping
     public ResponseEntity<?> cadastrarLivro(@RequestBody Livro livro) {
         try {
