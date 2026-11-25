@@ -1,11 +1,14 @@
 package br.edu.ifgoiano.jlacervo.controller;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 import br.edu.ifgoiano.jlacervo.model.Livro;
 import br.edu.ifgoiano.jlacervo.repository.LivroRepository;
 import br.edu.ifgoiano.jlacervo.service.LivroService;
+
+import org.springframework.web.bind.annotation.RequestParam;
+
 @CrossOrigin(origins = {
     "http://localhost:5500",
     "http://127.0.0.1:5500"
@@ -30,13 +36,16 @@ public class LivroController {
         this.livroRepository = livroRepository;
     }
 
-    // GET /api/livros (Eduardo): lista os livros do MySQL. Lista vazia retorna [].
+    //lista os livros do MySQL. Lista vazia retorna [].
     @GetMapping
-    public List<Livro> listarLivros() {
-        return livroRepository.findAll();
+    public List<Livro> listarLivros(@RequestParam(name = "busca", required = false) String busca) {
+        if (busca == null || busca.isBlank()) {
+            return livroRepository.findAll();
+        }
+        return livroRepository.findByTituloContainingIgnoreCaseOrAutorContainingIgnoreCase(busca.trim(), busca.trim());
     }
 
-    // POST /api/livros (Rian): mantido sem alterações.
+    //mantido sem alterações.
     @PostMapping
     public ResponseEntity<?> cadastrarLivro(@RequestBody Livro livro) {
         try {
@@ -49,6 +58,19 @@ public class LivroController {
         } catch (IllegalArgumentException erro) {
             return ResponseEntity
                     .badRequest()
+                    .body(erro.getMessage());
+        }
+    }
+
+    // Exclui um livro pelo id. 204 se excluiu, 404 se não existe.
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> excluirLivro(@PathVariable Long id) {
+        try {
+            livroService.excluirLivro(id);
+            return ResponseEntity.noContent().build();
+        } catch (NoSuchElementException erro) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
                     .body(erro.getMessage());
         }
     }

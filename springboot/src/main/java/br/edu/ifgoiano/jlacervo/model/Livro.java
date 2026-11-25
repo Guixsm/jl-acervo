@@ -28,6 +28,9 @@ public class Livro{
         setAnoPublicacao(anoPublicacao);
         setGenero(genero);
     }
+    public Long getId(){
+        return id;
+    }
     public String getTitulo(){
         return titulo;
     }

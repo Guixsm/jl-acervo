@@ -1,5 +1,7 @@
 package br.edu.ifgoiano.jlacervo.service;
 
+import java.util.NoSuchElementException;
+
 import org.springframework.stereotype.Service;
 
 import br.edu.ifgoiano.jlacervo.model.Livro;
@@ -22,5 +24,13 @@ public class LivroService {
         livro.setGenero(livro.getGenero());
         //salva o livro no banco de dados
         return livroRepository.save(livro);
+    }
+
+    // Exclui um livro pelo id. Se não existir, lança exceção (vira 404 no controller).
+    public void excluirLivro(Long id) {
+        if (!livroRepository.existsById(id)) {
+            throw new NoSuchElementException("Livro não encontrado.");
+        }
+        livroRepository.deleteById(id);
     }
 }

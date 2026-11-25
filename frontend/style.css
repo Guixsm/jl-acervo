@@ -101,3 +101,12 @@ input {
     width: 100%;
     box-sizing: border-box;
 }
+
+.botao-excluir {
+    background-color: #b91c1c;
+    margin-top: 10px;
+}
+
+.botao-excluir:hover {
+    background-color: #dc2626;
+}

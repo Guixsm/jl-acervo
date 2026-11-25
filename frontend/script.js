@@ -34,6 +34,12 @@ async function carregarLivros() {
                 card.appendChild(elemento);
             });
 
+            const botaoExcluir = document.createElement("button");
+            botaoExcluir.textContent = "Excluir";
+            botaoExcluir.classList.add("botao-excluir");
+            botaoExcluir.addEventListener("click", () => excluirLivro(livro.id, livro.titulo));
+            card.appendChild(botaoExcluir);
+
             listaLivros.appendChild(card);
         });
 
@@ -84,3 +90,30 @@ formulario.addEventListener("submit", async (event) => {
         alert("Não foi possível conectar com o servidor. Tente novamente mais tarde.");
     }
 });
+
+async function excluirLivro(id, titulo) {
+    if (!confirm('Deseja realmente excluir o livro "' + titulo + '"?')) {
+        return;
+    }
+
+    try {
+        const resposta = await fetch("http://localhost:8080/api/livros/" + id, {
+            method: "DELETE"
+        });
+
+        if (resposta.ok) {
+            alert("Livro excluído com sucesso!");
+        } else if (resposta.status === 404) {
+            alert("Livro não encontrado. Ele pode já ter sido excluído.");
+        } else {
+            alert("Não foi possível excluir o livro. Tente novamente.");
+            return;
+        }
+
+        carregarLivros(campoBusca.value.trim());
+
+    } catch (erro) {
+        console.error("Erro ao excluir livro:", erro);
+        alert("Não foi possível conectar com o servidor. Tente novamente mais tarde.");
+    }
+}
