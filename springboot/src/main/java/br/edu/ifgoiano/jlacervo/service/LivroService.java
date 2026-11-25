@@ -23,4 +23,23 @@ public class LivroService {
         //salva o livro no banco de dados
         return livroRepository.save(livro);
     }
+
+    //edita os dados de livro cadastrado
+    public Livro editarLivro(Long id, Livro novosDados) {
+
+        // Procura o livro pelo ID.
+        Livro livro = livroRepository.findById(id)
+                .orElseThrow(() ->
+                    new java.util.NoSuchElementException("Livro não encontrado."));
+
+        // Atualiza os dados do livro existente.
+        livro.setTitulo(novosDados.getTitulo());
+        livro.setAutor(novosDados.getAutor());
+        livro.setAnoPublicacao(novosDados.getAnoPublicacao());
+        livro.setGenero(novosDados.getGenero());
+
+        // Salva as alterações no banco de dados.
+        return livroRepository.save(livro);
+    }
+
 }
