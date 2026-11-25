@@ -45,7 +45,6 @@ async function carregarLivros(busca = "") {
         listaLivros.textContent = "Não foi possível carregar os livros. Verifique se o servidor está em execução.";
     }
 }
-carregarLivros();
 
 // Campo de busca: a cada letra digitada, recarrega a lista filtrada pelo texto.
 const campoBusca = document.querySelector("#campo-busca");
@@ -88,4 +87,17 @@ formulario.addEventListener("submit", async (event) => {
         console.error("Erro ao cadastrar livro:", erro);
         alert("Não foi possível conectar com o servidor. Tente novamente mais tarde.");
     }
+});
+
+const formularioLogin = document.querySelector("#formulario-login");
+const telaLogin = document.querySelector("#tela-login");
+const telaBiblioteca = document.querySelector("#tela-biblioteca");
+
+formularioLogin.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    telaLogin.style.display = "none";
+    telaBiblioteca.style.display = "block";
+
+    carregarLivros();
 });

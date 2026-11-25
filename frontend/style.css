@@ -1,3 +1,9 @@
+@font-face {
+    font-family: "Sekuya";
+    src: url("fonts/SEKUYA-REGULAR.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
 body {
     margin: 0;
     padding: 0;
@@ -69,18 +75,20 @@ button:hover {
     background-color: #2563eb;
 }
 
-@media (max-width: 600px) {
-    form {
+@media (max-width: 700px) {
+    #tela-login {
         flex-direction: column;
-        align-items: stretch;
+        height: auto;
+        min-height: calc(100vh - 40px);
     }
 
-    input {
+    .painel-formulario,
+    .painel-imagem {
         width: 100%;
     }
 
-    button {
-        width: 100%;
+    .painel-imagem {
+        min-height: 250px;
     }
 }
 
@@ -100,4 +108,267 @@ form {
 input {
     width: 100%;
     box-sizing: border-box;
+}
+#tela-biblioteca {
+    display: none;
+}
+.formulario-login {
+    width: 75%;
+    background-color: #c98278;
+    border-radius: 20px;
+    padding: 30px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: stretch;
+    width: 80%;
+    max-width: 400px;
+    min-height: 900px;
+    border-radius: 85.33px;
+
+
+}
+#tela-login {
+    display: flex;
+    width: calc(100% - 40px);
+    height: calc(100vh - 40px);
+    margin: 20px;
+    box-sizing: border-box;
+    background-color: transparent;
+    border-radius: 12px;
+    overflow: hidden;
+}
+.painel-formulario,
+.painel-imagem {
+    width: 50%;
+    padding: 30px;
+    box-sizing: border-box;
+}
+
+.painel-formulario {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: transparent;
+}
+.painel-imagem {
+    background-color: #e8dfd0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+@media (max-width: 700px) {
+    #tela-login {
+        flex-direction: column;
+    }
+
+    .painel-formulario,
+    .painel-imagem {
+        width: 100%;
+    }
+
+    .painel-imagem {
+        min-height: 250px;
+    }
+}
+.link-recuperacao {
+    align-self: center;
+    color: #000000;
+    font-size: 20px;
+    text-decoration: none;
+    display: block;
+    margin-top: 30px;
+    margin-bottom: 10px;
+
+}
+
+.link-recuperacao:hover {
+    text-decoration: underline;
+}
+.imagem-biblioteca {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+}
+.painel-imagem {
+    position: relative;
+    overflow: hidden;
+    min-height: 600px;
+    background-color: transparent;
+}
+.painel-imagem {
+    min-height: 600px;
+}
+.cabecalho-login {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 20px 4%;
+    margin: 0;
+
+    background-color: transparent;
+    color: #713b22;
+
+    box-shadow: none;
+    border: none;
+}
+
+.cabecalho-login h1 {
+    margin: 0;
+    font-size: 65px;
+    text-align: left;
+    padding-left: 55px;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+    font-weight: 900;
+    -webkit-text-stroke: 0.5px;
+    background: linear-gradient(to top, #451E0E, #AB4B22);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+.cabecalho-login nav {
+    display: flex;
+    gap: 24px;
+}
+
+.cabecalho-login a {
+    color: #30251f;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.cabecalho-login a:hover {
+    color: #a12a27;
+}
+body {
+    margin: 0;
+    background-color: #EDDEA2;
+}
+.painel-formulario {
+    width: 30%;
+    padding: 15px 5px;
+    box-sizing: border-box;
+}
+
+.painel-imagem {
+    width: 70%;
+    padding: 0;
+    box-sizing: border-box;
+}
+#formulario-login {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    width: 100%;
+    padding: 0;
+}
+#formulario-login input {
+    width: 100%;
+}        
+.formulario-login h2 {
+    color: #ffffff;
+    font-size: 24px;
+    margin-bottom: 25px;
+    text-align: center;
+    font-family: "Sekuya", sans-serif;
+}
+#formulario-login label {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    color: #713b22;
+}
+#formulario-login input {
+    background-color: #ffffff;
+    border: 1px solid #d6b6a8;
+    border-radius: 8px;
+    padding: 13px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+}
+
+#formulario-login button {
+    background-color: #a12a27;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 13px;
+    width: 100%;
+    font-family: Arial, sans-serif;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#formulario-login button:hover {
+    background-color: #7d211f;
+}
+.link-recuperacao {
+    align-self: center;
+    color: #713b22;
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    text-decoration: none;
+    margin-top: -4px;
+}
+
+.link-recuperacao:hover {
+    text-decoration: underline;
+}
+.separador-login {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #713b22;
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+}
+
+.separador-login::before,
+.separador-login::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background-color: #d6b6a8;
+}
+.botoes-sociais {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+}
+
+.botao-social {
+    flex: 1;
+    background-color: #ffffff;
+    color: #713b22;
+    border: 1px solid #d6b6a8;
+    border-radius: 8px;
+    padding: 12px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.botao-social:hover {
+    background-color: #f5e8e3;
+}
+.icones-livros {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
+.icone-livros {
+    width: 300px;
+    height: auto;
 }
